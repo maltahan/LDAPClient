@@ -1,79 +1,58 @@
 package com.idap.main;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Scanner;
 
-import javax.naming.Context;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.ModificationItem;
-
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.ldap.filter.AndFilter;
-import org.springframework.ldap.filter.EqualsFilter;
+import javax.naming.NamingException;
 
 public class LdapView {
 
-	public static void main(String[] args) {
+	private static Scanner scanner;
 
-		Properties initilaProperties = new Properties();
-		initilaProperties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		initilaProperties.put(Context.PROVIDER_URL, "ldap://clusterinfo.unineuchatel.ch:10389/");
-		initilaProperties.put(Context.SECURITY_PRINCIPAL, "cn=admin,dc=security,dc=ch");
-		initilaProperties.put(Context.SECURITY_CREDENTIALS, "security2017");
-
-		String url = "ldap://clusterinfo.unineuchatel.ch:10389/";
-		String base = "ou=students,dc=security,dc=ch";
-		String userDn = "cn=admin,dc=security,dc=ch";
-		String password = "security2017";
-		ModificationItem[] modItemsOne = new ModificationItem[1];
-		try {
-			DirContext dirContext = new InitialDirContext(initilaProperties);
-			LdapContextSource ctxSrc = new LdapContextSource();
-			ctxSrc.setUrl(url);
-			ctxSrc.setBase(base);
-			ctxSrc.setUserDn(userDn);
-			ctxSrc.setPassword(password);
-			ctxSrc.afterPropertiesSet();
-			LdapTemplate lt = new LdapTemplate(ctxSrc);
-
-			AndFilter filter = new AndFilter();
-			filter.and(new EqualsFilter("objectclass", "person"));
-			@SuppressWarnings("unchecked")
-			List<String> list = lt.search("", filter.encode(), new ContactAttributeMapperJson());
-			System.out.println(list.toString());
-
-			Attributes attributes = new BasicAttributes();
-			Attribute objectClass = new BasicAttribute("objectClass");
-			objectClass.add("person");
-			attributes.put(objectClass);
-
-			Attribute sn = new BasicAttribute("sn");
-			Attribute cn = new BasicAttribute("cn");
-			Attribute description = new BasicAttribute("description");
-
-			sn.add("really");
-			cn.add("mytest");
-			description.add("poor momo");
-
-			attributes.put(sn);
-			attributes.put(cn);
-			attributes.put(description);
-
-			// context.createSubcontext("cn=mytest,ou=students,dc=security,dc=ch",attributes);
-
-//			modItemsOne[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,new BasicAttribute("description", "description"));
-//			String entryDN = "cn=mytest,ou=students,dc=security,dc=ch";
-//			dirContext.modifyAttributes(entryDN, modItemsOne);
-			String entryDN = "cn=mytest,ou=students,dc=security,dc=ch";
-			dirContext.destroySubcontext(entryDN);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+	public static void main(String[] args) throws NamingException {
+		 scanner = new Scanner( System.in );
+		Ldap ldap = new Ldap();
+		//System.out.println(ldap.AddStudent());
+		//System.out.println(ldap.UpdateStudent());
+		//System.out.println(ldap.DeleteStudent());
+		//System.out.println(ldap.GetStudents());
+		
+		while(true) {
+			System.out.println("Press 1 to show the list of entries");
+			System.out.println("Press 2 to add an entry");
+			System.out.println("Press 3 to update an entry");
+			System.out.println("Press 4 to delete an entry");
+			System.out.print("Enter Your Option:");
+			String input = scanner.nextLine();
+			switch(input) {
+			case "1":
+			System.out.println(ldap.GetStudents());	
+			System.out.println("\n");
+			break;		
+			
+			case "2":
+				System.out.println("Please enter the These values");
+				System.out.println("Please enter a value for sn:");
+				String sn = scanner.nextLine();
+				System.out.println("Please enter a value for Common Name:");
+				String cn = scanner.nextLine();
+				System.out.println("Please enter a value for description:");
+				String description = scanner.nextLine();	
+				boolean AddEntrySuccess = ldap.AddStudent(sn,cn,description);
+				while(!AddEntrySuccess) {
+					System.out.println("you have entered the same value twice please re_enter the value of cn");
+					System.out.println("Please enter a value for Common Name:");
+					cn = scanner.nextLine();
+					AddEntrySuccess = ldap.AddStudent(sn,cn,description);
+				}				
+				System.out.println("The entry has been added press 1 to see the list");						
+                break;
+                
+			case "3":
+				System.out.println("Please enter the entry you want to edit");
+				String Entry = scanner.nextLine();	
+				System.out.println("Please enter the The colomns that you want to edit");
+			}
+			
 		}
 
 	}
