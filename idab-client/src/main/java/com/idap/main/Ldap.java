@@ -71,7 +71,7 @@ public class Ldap {
 		attributes.put(description);
 
 		try {
-			dirContext.createSubcontext("cn="+cn+",ou=students,dc=security,dc=ch", attributes);			
+			dirContext.createSubcontext("cn="+cn_value+",ou=students,dc=security,dc=ch", attributes);			
 			return true;
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
@@ -79,29 +79,29 @@ public class Ldap {
 		}
 	}
 
-	public String UpdateStudent() {
+	public boolean UpdateStudent(String Entry, String Colomn, String Value) {
 		ModificationItem[] modItemsOne = new ModificationItem[1];
-		modItemsOne[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,new BasicAttribute("description", "description"));
-		String entryDN = "cn=mytest,ou=students,dc=security,dc=ch";
+		modItemsOne[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,new BasicAttribute(Colomn, Value));
+		String entryDN = "cn="+Entry+",ou=students,dc=security,dc=ch";
 		try {
 			dirContext.modifyAttributes(entryDN, modItemsOne);
+			return true;
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return false;
 		}
-		return "The Entry has been Updated";
 	}
 
-	public String DeleteStudent() {
+	public boolean DeleteStudent(String Entry) {
 
-		String entryDN = "cn=mytest,ou=students,dc=security,dc=ch";
+		String entryDN = "cn="+Entry+",ou=students,dc=security,dc=ch";
 		try {
 			dirContext.destroySubcontext(entryDN);
+			return true;
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return false;
 		}
-		return "The entry has been deleted";
 	}
 
 	public DirContext GetInitialProperties() throws NamingException {
