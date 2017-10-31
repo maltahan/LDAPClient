@@ -1,4 +1,4 @@
-package com.idap.main;
+package com;
 
 import java.util.ArrayList;
 import java.util.List;

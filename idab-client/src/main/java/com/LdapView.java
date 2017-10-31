@@ -1,4 +1,4 @@
-package com.idap.main;
+package com;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,7 @@ public class LdapView {
 				break;
 			case "4":
 				boolean DeleteSuccess = false;
-				System.out.println("Please enter the entry name that you want to edit");
+				System.out.println("Please enter the entry name that you want to delete");
 				Entry = scanner.nextLine();
 				DeleteSuccess = ldap.DeleteStudent(Entry);
 				if (!DeleteSuccess) {

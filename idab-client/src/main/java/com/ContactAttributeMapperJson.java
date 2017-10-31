@@ -1,4 +1,4 @@
-package com.idap.main;
+package com;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
